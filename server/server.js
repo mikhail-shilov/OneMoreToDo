@@ -10,6 +10,9 @@ import cookieParser from 'cookie-parser'
 import config from './config'
 import Html from '../client/html'
 
+const { readFile } = require("fs").promises;  
+
+
 require('colors')
 
 let Root
@@ -34,6 +37,47 @@ const middleware = [
 ]
 
 middleware.forEach((it) => server.use(it))
+
+// List of task in category
+server.get('/api/v1/tasks/:category', (req, res) => {
+  const { category } = req.params
+
+  readFile(`${__dirname}/${category}.json`, { encoding: "utf8" })  
+  .then(text => {  
+    res.json(JSON.parse(text))
+  })   
+  .catch(err => {  
+    res.json({ error: err })
+  })  
+
+  console.log(category)
+})
+
+server.get('/api/v1/tasks/:category/:timespan', (req, res) => {
+  const { category, timespan } = req.params
+  console.log(category)
+  res.json({ category, timespan })
+})
+
+server.post('/api/v1/tasks/:category', (req, res) => {
+  // const { category } = req.params
+  const newTask = req.body;
+  const message = `New task is created`
+  res.json({ message , Content: newTask })
+})
+
+server.patch('/api/v1/tasks/:category/:id', (req, res) => {
+  const { id } = req.params
+  const updateTask = req.body;
+  const message = `Id ${id} patched`
+  res.json({ message, updateTask })
+})
+
+server.delete('/api/v1/tasks/:category/:id', (req, res) => {
+  const { category, id } = req.params
+  console.log(category)
+  res.json({ 'Id deleted succesful': id })
+})
 
 server.use('/api/', (req, res) => {
   res.status(404)
@@ -71,7 +115,7 @@ if (config.isSocketsEnabled) {
   const echo = sockjs.createServer()
   echo.on('connection', (conn) => {
     connections.push(conn)
-    conn.on('data', async () => {})
+    conn.on('data', async () => { })
 
     conn.on('close', () => {
       connections = connections.filter((c) => c.readyState !== 3)
