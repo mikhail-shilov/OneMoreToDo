@@ -44,31 +44,25 @@ middleware.forEach((it) => server.use(it))
 server.get('/api/v1/tasks/:category', (req, res) => {
   const { category } = req.params
   readFile(`${fsStore}/${category}.json`, { encoding: 'utf8' })
-    .then(text => {
+    .then((text) => {
       const output = JSON.parse(text)
-      console.log('File exist!')
       res.json(output)
     })
     .catch((err) => {
       if (err.code === 'ENOENT') {
-        console.log('No category exist!')
-        console.log(err)
+        res.json({ Status: "No category" })
       } else {
-        console.log('Error in json file!')
-        console.log(err)
+        res.json({ 'Status': 'Some error', 'errorLog': err })
       }
-      res.json({ err })
     })
 })
 
 server.get('/api/v1/tasks/:category/:timespan', (req, res) => {
   const { category, timespan } = req.params
-  console.log(category)
   res.json({ category, timespan })
 })
 
 // Добавление задачи. Если файл категории не существует - он будет создан.
-// Надо подумать как обойтись без дублирования
 server.post('/api/v1/tasks/:category', (req, res) => {
   const { category } = req.params
   const fileName = `${fsStore}/${category}.json`
@@ -82,20 +76,20 @@ server.post('/api/v1/tasks/:category', (req, res) => {
     _deletedAt: null
   }
 
-  readFile(fileName, { encoding: "utf8" })
-    .then(text => {
+  readFile(fileName, { encoding: 'utf8' })
+    .then((text) => {
       const existedTasks = JSON.parse(text)
       const taskList = [...existedTasks, newTask]
-      writeFile(fileName, JSON.stringify(taskList), { encoding: "utf8" });
-      res.json({ Status: "Ok!" })
+      writeFile(fileName, JSON.stringify(taskList), { encoding: 'utf8' })
+      res.json({ Status: 'Ok!' })
     })
-    .catch(err => {
+    .catch((err) => {
       if (err.code === 'ENOENT') {
         const taskList = [newTask]
         console.log(`${category}:`)
-        console.log(taskList.map(item => `${item.taskId}: ${item.title}`))
-        writeFile(fileName, JSON.stringify(taskList), { encoding: "utf8" });
-        res.json({ Status: "Ok!" })
+        console.log(taskList.map((item) => `${item.taskId}: ${item.title}`))
+        writeFile(fileName, JSON.stringify(taskList), { encoding: 'utf8' })
+        res.json({ Status: 'Ok!' })
       } else {
         res.json({ Status: "JSON parse error!" })
       }
@@ -104,15 +98,32 @@ server.post('/api/v1/tasks/:category', (req, res) => {
 
 server.patch('/api/v1/tasks/:category/:id', (req, res) => {
   const { id } = req.params
-  const updateTask = req.body;
+  const updateTask = req.body
   const message = `Id ${id} patched`
   res.json({ message, updateTask })
 })
 
+// Функция меняет свойство _isDeleted объекта задачи с нужным id на TRUE
 server.delete('/api/v1/tasks/:category/:id', (req, res) => {
   const { category, id } = req.params
-  console.log(category)
-  res.json({ 'Id deleted succesful': id })
+  const fileName = `${fsStore}/${category}.json`
+
+  readFile(fileName, { encoding: 'utf8' })
+    .then((text) => {
+      const tasks = JSON.parse(text)
+      const indexOfTask = tasks.findIndex((task) => task.taskId === id)
+      const field = '_isDeleted'
+      if (indexOfTask !== -1) {
+        tasks[indexOfTask][field] = true
+        writeFile(fileName, JSON.stringify(tasks), { encoding: 'utf8' })
+        res.json({ Status: 'Ok', data: tasks })
+      } else {
+        res.json({ Status: 'Error', Message: 'Element not found' })
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 })
 
 server.use('/api/', (req, res) => {
