@@ -5,13 +5,13 @@ import bodyParser from 'body-parser'
 import sockjs from 'sockjs'
 import { renderToStaticNodeStream } from 'react-dom/server'
 import React from 'react'
+import { nanoid } from 'nanoid'
 
 import cookieParser from 'cookie-parser'
 import config from './config'
 import Html from '../client/html'
 
-const { readFile } = require("fs").promises;  
-
+const { readFile, writeFile } = require('fs').promises
 
 require('colors')
 
@@ -24,6 +24,8 @@ try {
 }
 
 let connections = []
+
+const fsStore = `${__dirname}/records`
 
 const port = process.env.PORT || 8090
 const server = express()
@@ -41,16 +43,22 @@ middleware.forEach((it) => server.use(it))
 // List of task in category
 server.get('/api/v1/tasks/:category', (req, res) => {
   const { category } = req.params
-
-  readFile(`${__dirname}/${category}.json`, { encoding: "utf8" })  
-  .then(text => {  
-    res.json(JSON.parse(text))
-  })   
-  .catch(err => {  
-    res.json({ error: err })
-  })  
-
-  console.log(category)
+  readFile(`${fsStore}/${category}.json`, { encoding: 'utf8' })
+    .then(text => {
+      const output = JSON.parse(text)
+      console.log('File exist!')
+      res.json(output)
+    })
+    .catch((err) => {
+      if (err.code === 'ENOENT') {
+        console.log('No category exist!')
+        console.log(err)
+      } else {
+        console.log('Error in json file!')
+        console.log(err)
+      }
+      res.json({ err })
+    })
 })
 
 server.get('/api/v1/tasks/:category/:timespan', (req, res) => {
@@ -59,11 +67,39 @@ server.get('/api/v1/tasks/:category/:timespan', (req, res) => {
   res.json({ category, timespan })
 })
 
+// Добавление задачи. Если файл категории не существует - он будет создан.
+// Надо подумать как обойтись без дублирования
 server.post('/api/v1/tasks/:category', (req, res) => {
-  // const { category } = req.params
-  const newTask = req.body;
-  const message = `New task is created`
-  res.json({ message , Content: newTask })
+  const { category } = req.params
+  const fileName = `${fsStore}/${category}.json`
+
+  const newTask = {
+    taskId: nanoid(),
+    title: req.body.title,
+    status: 'new',
+    _isDeleted: false,
+    _createdAt: +new Date(),
+    _deletedAt: null
+  }
+
+  readFile(fileName, { encoding: "utf8" })
+    .then(text => {
+      const existedTasks = JSON.parse(text)
+      const taskList = [...existedTasks, newTask]
+      writeFile(fileName, JSON.stringify(taskList), { encoding: "utf8" });
+      res.json({ Status: "Ok!" })
+    })
+    .catch(err => {
+      if (err.code === 'ENOENT') {
+        const taskList = [newTask]
+        console.log(`${category}:`)
+        console.log(taskList.map(item => `${item.taskId}: ${item.title}`))
+        writeFile(fileName, JSON.stringify(taskList), { encoding: "utf8" });
+        res.json({ Status: "Ok!" })
+      } else {
+        res.json({ Status: "JSON parse error!" })
+      }
+    })
 })
 
 server.patch('/api/v1/tasks/:category/:id', (req, res) => {
