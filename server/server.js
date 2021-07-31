@@ -45,8 +45,11 @@ server.get('/api/v1/tasks/:category', (req, res) => {
   const { category } = req.params
   readFile(`${fsStore}/${category}.json`, { encoding: 'utf8' })
     .then((text) => {
-      const output = JSON.parse(text)
-      res.json(output)
+      const tasks = JSON.parse(text).map((task) => {
+        const pubKeys = Object.keys(task).filter((item) => item.match(/^[^_].*/mg))
+        return pubKeys.reduce((nonPrivateTask, key) => ({...nonPrivateTask, [key]: task[key]}), {})
+      })
+      res.json(tasks)
     })
     .catch((err) => {
       if (err.code === 'ENOENT') {
@@ -57,6 +60,7 @@ server.get('/api/v1/tasks/:category', (req, res) => {
     })
 })
 
+// Filter of tasks by date/time
 server.get('/api/v1/tasks/:category/:timespan', (req, res) => {
   const { category, timespan } = req.params
   res.json({ category, timespan })
@@ -96,14 +100,13 @@ server.post('/api/v1/tasks/:category', (req, res) => {
     })
 })
 
+// Update status of task from fixed list
 server.patch('/api/v1/tasks/:category/:id', (req, res) => {
   const { category, id } = req.params
   const fileName = `${fsStore}/${category}.json`
   const newStatus = req.body.status
-  console.log(newStatus)
 
-  if (['done', 'new', 'in progress', 'blocked'].includes(newStatus) ) {
-    console.log('WTF?')
+  if (['done', 'new', 'in progress', 'blocked'].includes(newStatus)) {
     readFile(fileName, { encoding: 'utf8' })
       .then((text) => {
         const tasks = JSON.parse(text)
