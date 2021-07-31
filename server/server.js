@@ -97,10 +97,31 @@ server.post('/api/v1/tasks/:category', (req, res) => {
 })
 
 server.patch('/api/v1/tasks/:category/:id', (req, res) => {
-  const { id } = req.params
-  const updateTask = req.body
-  const message = `Id ${id} patched`
-  res.json({ message, updateTask })
+  const { category, id } = req.params
+  const fileName = `${fsStore}/${category}.json`
+  const newStatus = req.body.status
+  console.log(newStatus)
+
+  if (['done', 'new', 'in progress', 'blocked'].includes(newStatus) ) {
+    console.log('WTF?')
+    readFile(fileName, { encoding: 'utf8' })
+      .then((text) => {
+        const tasks = JSON.parse(text)
+        const indexOfTask = tasks.findIndex((task) => task.taskId === id)
+        if (indexOfTask !== -1) {
+          tasks[indexOfTask].status = newStatus;
+          writeFile(fileName, JSON.stringify(tasks), { encoding: 'utf8' })
+          res.json({ Status: 'Ok' })
+        } else {
+          res.json({ Status: 'Error', Message: 'Element not found' })
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  } else {
+    res.json({ "status": "error", "message": "incorrect status" })
+  }
 })
 
 // Функция меняет свойство _isDeleted объекта задачи с нужным id на TRUE
@@ -112,11 +133,13 @@ server.delete('/api/v1/tasks/:category/:id', (req, res) => {
     .then((text) => {
       const tasks = JSON.parse(text)
       const indexOfTask = tasks.findIndex((task) => task.taskId === id)
-      const field = '_isDeleted'
       if (indexOfTask !== -1) {
+        let field = '_isDeleted'
         tasks[indexOfTask][field] = true
+        field = '_deletedAt'
+        tasks[indexOfTask][field] = +new Date()
         writeFile(fileName, JSON.stringify(tasks), { encoding: 'utf8' })
-        res.json({ Status: 'Ok', data: tasks })
+        res.json({ Status: 'Ok' })
       } else {
         res.json({ Status: 'Error', Message: 'Element not found' })
       }
