@@ -41,36 +41,64 @@ const middleware = [
 middleware.forEach((it) => server.use(it))
 
 // List of task in category
-server.get('/api/v1/tasks/:category', (req, res) => {
-  const { category } = req.params
+server.get(['/api/v1/tasks/:category', '/api/v1/tasks/:category/:timespan'], (req, res) => {
+  const { category, timespan } = req.params
+  const safeTimespans = ['day', 'week', 'month']
+
   readFile(`${fsStore}/${category}.json`, { encoding: 'utf8' })
     .then((text) => {
-      const tasks = JSON.parse(text).map((task) => {
-        const pubKeys = Object.keys(task).filter((item) => item.match(/^[^_].*/mg))
-        return pubKeys.reduce((nonPrivateTask, key) => ({...nonPrivateTask, [key]: task[key]}), {})
+      // Parse JSON from file
+      let tasks = JSON.parse(text)
+      // Drop DELETED tasks
+      tasks = tasks.filter((task) => {
+        const privateKey = '_isDeleted' // Unexpected dangling '_' in '_isDeleted' by linter
+        return !task[privateKey]
+      })
+      // If timestamp is active - filter tasks by date
+      if (safeTimespans.includes(timespan)) {
+        let periodOfTime = 0
+        // May change this switch to object { day: 1000 * 60 * 60 * 2 }
+        switch (timespan) {
+          case 'day':
+            periodOfTime = 1000 * 60 * 60 * 24
+            break
+          case 'week':
+            periodOfTime = 7 * 1000 * 60 * 60 * 2
+            break
+          case 'month':
+            periodOfTime = 30 * 1000 * 60 * 60 * 24
+            break
+          default:
+            console.log('Unknown timestamp!')
+            break
+        }
+
+        tasks = tasks.filter((task) => {
+          const privateKey = '_createdAt' // Unexpected dangling '_' in '_isDeleted' by linter
+          return task[privateKey] + periodOfTime > +new Date()
+        })
+      }
+
+      // Clear keys like _keyName
+      tasks = tasks.map((task) => {
+        const pubKeys = Object.keys(task).filter((item) => item.match(/^[^_].*/gm))
+        return pubKeys.reduce((nonPrivateKey, key) => ({ ...nonPrivateKey, [key]: task[key] }), {})
       })
       res.json(tasks)
     })
     .catch((err) => {
       if (err.code === 'ENOENT') {
-        res.json({ Status: "No category" })
+        res.json({ Status: 'No category' })
       } else {
-        res.json({ 'Status': 'Some error', 'errorLog': err })
+        res.json({ Status: 'Some error', errorLog: err })
       }
     })
 })
 
-// Filter of tasks by date/time
-server.get('/api/v1/tasks/:category/:timespan', (req, res) => {
-  const { category, timespan } = req.params
-  res.json({ category, timespan })
-})
-
-// Добавление задачи. Если файл категории не существует - он будет создан.
+// Add some task. Если файл категории не существует - он будет создан.
 server.post('/api/v1/tasks/:category', (req, res) => {
   const { category } = req.params
   const fileName = `${fsStore}/${category}.json`
-
   const newTask = {
     taskId: nanoid(),
     title: req.body.title,
@@ -90,12 +118,10 @@ server.post('/api/v1/tasks/:category', (req, res) => {
     .catch((err) => {
       if (err.code === 'ENOENT') {
         const taskList = [newTask]
-        console.log(`${category}:`)
-        console.log(taskList.map((item) => `${item.taskId}: ${item.title}`))
         writeFile(fileName, JSON.stringify(taskList), { encoding: 'utf8' })
         res.json({ Status: 'Ok!' })
       } else {
-        res.json({ Status: "JSON parse error!" })
+        res.json({ Status: 'JSON parse error!' })
       }
     })
 })
@@ -105,14 +131,15 @@ server.patch('/api/v1/tasks/:category/:id', (req, res) => {
   const { category, id } = req.params
   const fileName = `${fsStore}/${category}.json`
   const newStatus = req.body.status
+  const safeStatuses = ['done', 'new', 'in progress', 'blocked']
 
-  if (['done', 'new', 'in progress', 'blocked'].includes(newStatus)) {
+  if (safeStatuses.includes(newStatus)) {
     readFile(fileName, { encoding: 'utf8' })
       .then((text) => {
         const tasks = JSON.parse(text)
         const indexOfTask = tasks.findIndex((task) => task.taskId === id)
         if (indexOfTask !== -1) {
-          tasks[indexOfTask].status = newStatus;
+          tasks[indexOfTask].status = newStatus
           writeFile(fileName, JSON.stringify(tasks), { encoding: 'utf8' })
           res.json({ Status: 'Ok' })
         } else {
@@ -123,7 +150,7 @@ server.patch('/api/v1/tasks/:category/:id', (req, res) => {
         console.log(err)
       })
   } else {
-    res.json({ "status": "error", "message": "incorrect status" })
+    res.json({ Status: 'Error', Message: 'Incorrect status' })
   }
 })
 
@@ -188,8 +215,7 @@ if (config.isSocketsEnabled) {
   const echo = sockjs.createServer()
   echo.on('connection', (conn) => {
     connections.push(conn)
-    conn.on('data', async () => { })
-
+    conn.on('data', async () => {})
     conn.on('close', () => {
       connections = connections.filter((c) => c.readyState !== 3)
     })
