@@ -6,7 +6,8 @@ import { Switch, Route, StaticRouter } from 'react-router-dom'
 import store, { history } from '../redux'
 
 import Home from '../components/home'
-import ToDoRoot from '../components/ToDo-root'
+import ToDo from '../components/ToDo'
+import Dummy from '../components/dummy-view'
 import NotFound from '../components/404'
 
 import Startup from './startup'
@@ -20,7 +21,10 @@ const RootComponent = (props) => {
       <RouterSelector history={history} location={props.location} context={props.context}>
         <Startup>
           <Switch>
-            <Route exact path="/:category?" component={ToDoRoot} />
+            <Route exact path="/:category?" component={ToDo} />
+
+            <Route exact path="old/:category?" component={Dummy} />
+
             <Route exact path="/dashboard" component={Home} />
             <Route component={NotFound} />
           </Switch>

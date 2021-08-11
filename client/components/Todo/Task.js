@@ -1,16 +1,17 @@
 import React from 'react'
 
-const ListOfTasks = () => {
+const ListOfTasks = (props) => {
+
   return (
     <div className="flex mb-4 items-center">
       <p className="w-full text-grey-darkest">
-        Add another component to Tailwind Components
+        {props.title}
       </p>
       <button
         type="button"
         className="flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green"
       >
-        Done
+        Done ({props.status})
       </button>
       <button
         type="button"
