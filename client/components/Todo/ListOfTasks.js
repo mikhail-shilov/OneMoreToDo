@@ -7,9 +7,12 @@ const ListOfTasks = (props) => {
     return (
       <Task
         key={task.taskId}
-        id={task.taskId}
+        taskId={task.taskId}
         title={task.title}
         status={task.status}
+        patchTitle={props.patchTitle}
+        patchStatus={props.pathStatus}
+        delete={props.delete}
       />
     )
   })

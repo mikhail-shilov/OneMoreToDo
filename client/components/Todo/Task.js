@@ -1,15 +1,16 @@
 import React from 'react'
 
-const ListOfTasks = (props) => {
-  const { status } = props
+const Task = (props) => {
+  const { taskId, status, patchStatus } = props
 
   const ButtonInProgress = () => (
     <button
       type="button"
       className="flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green"
-    >
-      In progress
-    </button>)
+      onClick={() => {
+        patchStatus(taskId, 'in progress')
+      }}
+    >In progress</button>)
   const ButtonBlocked = () => (
     <button
       type="button"
@@ -45,4 +46,4 @@ const ListOfTasks = (props) => {
   )
 }
 
-export default ListOfTasks
+export default Task

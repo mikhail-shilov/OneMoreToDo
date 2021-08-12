@@ -10,7 +10,6 @@ const Input = (props) => {
     console.log(`add...${value}`)
     props.action(value)
     setValue('')
-
   }
 
   return (

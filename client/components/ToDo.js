@@ -8,27 +8,50 @@ import Input from './Todo/Input';
 
 const Dummy = () => {
   const { category } = useParams()
-  const [tasks, setTasks] = useState([{ ff: "dfg" }, { fs: 'sfsdf' }])
+  const [tasks, setTasks] = useState([])
+
+  // Functions, that work with API
+  const apiLoad = () => {
+    axios.get(`/api/v1/tasks/${category}`).then(data => {
+      console.log('Updated list of tasks...')
+      setTasks(data.data)
+    })
+  }
+  const apiCreate = (title) => {
+    axios.post(`/api/v1/tasks/${category}`, { title }).then(data => {
+      apiLoad();
+      console.log(data.data)
+    })
+  }
+  const apiPatch = (id, update) => {
+    axios.patch(`/api/v1/tasks/${category}/${id}`, update).then(data => {
+      apiLoad();
+      console.log(data.data)
+    })
+  }
+  const apiPatchTitle = (id, newTitle) => {
+    const update = { title: newTitle }
+    apiPatch(id, update)
+  }
+  const apiPatchStatus = (id, newStatus) => {
+    const update = { status: newStatus }
+    apiPatch(id, update)
+  }
+  const apiDelete = (id) => {
+    axios.delete(`/api/v1/tasks/${category}/${id}`).then(data => {
+      apiLoad();
+      console.log(data.data)
+    })
+  }
 
   // Loading tasks at start and when category changed
   useEffect(
     () => {
-      axios.get(`/api/v1/tasks/${category}`)
-        .then(data => {
-          console.log('Loaded:')
-          console.log(data.data)
-          setTasks(data.data)
-        })
-        .catch(err => console.log(err))
+      apiLoad();
     },
     [category]
   )
 
-  const taskCreate = (title) => {
-    axios.post(`/api/v1/tasks/${category}`, { title }).then(data => { console.log(data.data) })
-  }
-  // const taskPatch = (id, update) => { }
-  // const taskDelete = (id) => { }
 
   return (
     <div>
@@ -41,10 +64,15 @@ const Dummy = () => {
               Active category: {(typeof category !== "undefined") ? `${category}!` : 'not selected...'}
             </h2>
             <h2><Link to='/home'>home</Link> <Link to='/work'>work</Link> </h2>
-            <Input action={taskCreate} />
+            <Input action={apiCreate} />
           </div>
           <div>
-            <ListOfTasks tasks={tasks} />
+            <ListOfTasks
+              tasks={tasks}
+              pathTitle={apiPatchTitle}
+              pathStatus={apiPatchStatus}
+              delete={apiDelete}
+            />
           </div>
         </div>
       </div>
