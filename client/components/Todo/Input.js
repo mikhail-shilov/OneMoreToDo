@@ -2,18 +2,21 @@ import React, { useState } from 'react'
 
 const Input = (props) => {
   const [value, setValue] = useState('')
-
   const inputHandler = (e) => {
     setValue(e.target.value)
   }
+
   const addHandler = () => {
-    props.addTask(value)
+    console.log(`add...${value}`)
+    props.action(value)
+    setValue('')
+
   }
 
   return (
     <div>
       <input
-        className="shadow appearance-none border rounded w-full py-2 px-3 mr-4 text-grey-darker"
+        className="shadow appearance-none border rounded py-2 px-3 mr-4 text-grey-darker"
         placeholder="Add Todo"
         value={value}
         onChange={inputHandler}

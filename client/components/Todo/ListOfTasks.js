@@ -1,12 +1,22 @@
 import React from 'react'
 import Task from './Task'
 
-const ListOfTasks = () => {
+const ListOfTasks = (props) => {
+
+  const list = props.tasks.map((task) => {
+    return (
+      <Task
+        key={task.taskId}
+        id={task.taskId}
+        title={task.title}
+        status={task.status}
+      />
+    )
+  })
+
   return (
     <div>
-      <Task title='Новая задача' status='new' />
-      <Task title='Законченная задача (уф)' status='done' />
-      <Task title='Надо пахать!' status='In progress' />
+      {list}
     </div>
   )
 }
