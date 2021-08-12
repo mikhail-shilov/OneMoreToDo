@@ -20,13 +20,13 @@ const Dummy = () => {
   const apiCreate = (title) => {
     axios.post(`/api/v1/tasks/${category}`, { title }).then(data => {
       apiLoad();
-      console.log(data.data)
+      console.log(data.data.Status)
     })
   }
   const apiPatch = (id, update) => {
     axios.patch(`/api/v1/tasks/${category}/${id}`, update).then(data => {
       apiLoad();
-      console.log(data.data)
+      console.log(data.data.Status)
     })
   }
   const apiPatchTitle = (id, newTitle) => {
