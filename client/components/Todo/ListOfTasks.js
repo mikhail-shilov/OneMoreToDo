@@ -10,9 +10,9 @@ const ListOfTasks = (props) => {
         taskId={task.taskId}
         title={task.title}
         status={task.status}
-        patchTitle={props.patchTitle}
-        patchStatus={props.pathStatus}
-        delete={props.delete}
+        doPatchTitle={props.doPatchTitle}
+        doPatchStatus={props.doPatchStatus}
+        doDelete={props.doDelete}
       />
     )
   })

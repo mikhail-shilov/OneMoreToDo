@@ -40,7 +40,7 @@ const Dummy = () => {
   const apiDelete = (id) => {
     axios.delete(`/api/v1/tasks/${category}/${id}`).then(data => {
       apiLoad();
-      console.log(data.data)
+      console.log(data.data.Status)
     })
   }
 
@@ -69,9 +69,9 @@ const Dummy = () => {
           <div>
             <ListOfTasks
               tasks={tasks}
-              pathTitle={apiPatchTitle}
-              pathStatus={apiPatchStatus}
-              delete={apiDelete}
+              doPatchTitle={apiPatchTitle}
+              doPatchStatus={apiPatchStatus}
+              doDelete={apiDelete}
             />
           </div>
         </div>

@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Task = (props) => {
-  const { taskId, status, patchStatus } = props
+  const { taskId, status, doPatchStatus, doDelete } = props
 
   const DONE = 'done'
   const INPROGRESS = 'in progress'
@@ -11,41 +11,31 @@ const Task = (props) => {
     <button
       type="button"
       className="flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green"
-      onClick={() => {
-        patchStatus(taskId, INPROGRESS)
-      }}
-    >In progress</button>)
+      onClick={() => { doPatchStatus(taskId, INPROGRESS) }}>In progress</button>)
+
   const ButtonBlocked = () => (
     <button
       type="button"
       className="flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green"
-      onClick={() => {
-        patchStatus(taskId, BLOCKED)
-      }}
+      onClick={() => { doPatchStatus(taskId, BLOCKED) }}>Blocked</button>)
 
-    >
-      Blocked
-    </button>)
   const ButtonResume = () => (
     <button
       type="button"
       className="flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green"
-      onClick={() => {
-        patchStatus(taskId, INPROGRESS)
-      }}
-    >
-      Resume
-    </button>)
+      onClick={() => { doPatchStatus(taskId, INPROGRESS) }}>Resume</button>)
+
   const ButtonDone = () => (
     <button
       type="button"
       className="flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green"
-      onClick={() => {
-        patchStatus(taskId, DONE)
-      }}
-    >
-      Done
-    </button>)
+      onClick={() => { doPatchStatus(taskId, DONE) }}>Done</button>)
+
+  const ButtonRemove = () => (
+    <button
+      type="button"
+      className="flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green"
+      onClick={() => { doDelete(taskId) }}>Remove</button>)
 
   return (
     <div className="flex mb-4 items-center">
@@ -56,6 +46,7 @@ const Task = (props) => {
       {(status === 'in progress') && <ButtonBlocked />}
       {(status === 'in progress') && <ButtonDone />}
       {(status === 'blocked') && <ButtonResume />}
+      <ButtonRemove />
 
     </div>
   )
