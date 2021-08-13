@@ -45,13 +45,7 @@ const Dummy = () => {
   }
 
   // Loading tasks at start and when category changed
-  useEffect(
-    () => {
-      apiLoad();
-    },
-    [category]
-  )
-
+  useEffect(() => { apiLoad() }, [category])
 
   return (
     <div>
@@ -64,7 +58,9 @@ const Dummy = () => {
               Active category: {(typeof category !== "undefined") ? `${category}!` : 'not selected...'}
             </h2>
             <h2><Link to='/home'>home</Link> <Link to='/work'>work</Link> </h2>
-            <Input action={apiCreate} />
+            <Input
+              action={apiCreate}
+            />
           </div>
           <div>
             <ListOfTasks

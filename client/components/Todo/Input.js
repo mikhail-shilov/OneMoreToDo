@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 
 const Input = (props) => {
   const [value, setValue] = useState('')
-  const inputHandler = (e) => {
-    setValue(e.target.value)
+  const inputHandler = (event) => {
+    setValue(event.target.value)
   }
 
   const addHandler = () => {
