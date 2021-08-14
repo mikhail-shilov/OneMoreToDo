@@ -130,16 +130,52 @@ server.post('/api/v1/tasks/:category', (req, res) => {
 server.patch('/api/v1/tasks/:category/:id', (req, res) => {
   const { category, id } = req.params
   const fileName = `${fsStore}/${category}.json`
-  const newStatus = req.body.status
   const safeStatuses = ['done', 'new', 'in progress', 'blocked']
 
-  if (safeStatuses.includes(newStatus)) {
+  let isSomeToWrite = false
+  let withError = false
+
+  const patch = {};
+  const errorLog = { status: 'error' }
+
+  const newTitle = req.body.title
+  const newStatus = req.body.status
+
+  console.log('Data input:')
+  console.log(newTitle)
+  console.log(newStatus)
+
+  if (typeof newTitle !== 'undefined') {
+    if (newTitle !== '') {
+      patch.title = newTitle
+      isSomeToWrite = true
+    } else {
+      withError = true
+      errorLog.taskTitle = 'title can\'t be empty' 
+    } 
+  }
+
+  if (typeof newStatus !== 'undefined') {
+    if (safeStatuses.includes(newStatus)) {
+      patch.status = newStatus
+      isSomeToWrite = true
+    } else {
+      withError = true
+      errorLog.taskStatus = 'incorrect status' 
+    } 
+  }
+
+  if (isSomeToWrite && !withError) {
+    console.log('isSomeToWrite!')
+
     readFile(fileName, { encoding: 'utf8' })
       .then((text) => {
         const tasks = JSON.parse(text)
         const indexOfTask = tasks.findIndex((task) => task.taskId === id)
         if (indexOfTask !== -1) {
-          tasks[indexOfTask].status = newStatus
+          tasks[indexOfTask] = {...tasks[indexOfTask], ...patch}
+          console.log('tasks[indexOfTask]')
+          console.log(tasks[indexOfTask])
           writeFile(fileName, JSON.stringify(tasks), { encoding: 'utf8' })
           res.json({ Status: 'Ok' })
         } else {
@@ -150,7 +186,8 @@ server.patch('/api/v1/tasks/:category/:id', (req, res) => {
         console.log(err)
       })
   } else {
-    res.json({ Status: 'Error', Message: 'Incorrect status' })
+    res.status(501)
+    res.json(errorLog)
   }
 })
 
@@ -215,7 +252,7 @@ if (config.isSocketsEnabled) {
   const echo = sockjs.createServer()
   echo.on('connection', (conn) => {
     connections.push(conn)
-    conn.on('data', async () => {})
+    conn.on('data', async () => { })
     conn.on('close', () => {
       connections = connections.filter((c) => c.readyState !== 3)
     })
