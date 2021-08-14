@@ -64,8 +64,7 @@ const Task = (props) => {
         {editMode ? <EditTitle /> : title}
       </p>
       {(status === 'new') && <ButtonInProgress />}
-      {(status === 'in progress') && <ButtonBlocked />}
-      {(status === 'in progress') && <ButtonDone />}
+      {(status === 'in progress') && <><ButtonBlocked /> <ButtonDone /></>}
       {(status === 'blocked') && <ButtonResume />}
       <ButtonRemove />
 
