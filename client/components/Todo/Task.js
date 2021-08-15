@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 const Task = (props) => {
-  const { taskId, title, status, doPatchStatus, doDelete } = props
+  const { taskId, title, status, doPatchTitle, doPatchStatus, doDelete } = props
   const [editMode, setEditMode] = useState(false)
   const [titleValue, setTitleValue] = useState(title)
 
@@ -9,11 +9,25 @@ const Task = (props) => {
   const INPROGRESS = 'in progress'
   const BLOCKED = 'blocked'
 
+  const editHandler = (event) => {
+    setTitleValue(event.target.value)
+  }
+
+
   const ButtonEdit = () => (
     <button
       type="button"
       className="flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green"
-      onClick={() => { setEditMode(!editMode) }}>Edit</button>)
+      onClick={() => { setEditMode(true) }}>Edit</button>)
+
+  const ButtonSave = () => (
+    <button
+      type="button"
+      className="flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white text-green border-green hover:bg-green"
+      onClick={() => {
+        doPatchTitle(taskId, titleValue)
+        setEditMode(false)
+      }}>Save</button>)
 
   const ButtonInProgress = () => (
     <button
@@ -49,20 +63,17 @@ const Task = (props) => {
 
   const EditTitle = () => (
     <input
+      name="titleEditor"
+      type='text'
       className="shadow appearance-none border rounded py-2 px-3 mr-4 text-grey-darker"
       value={titleValue}
-      onChange={(event) => { setTitleValue(event.target.value) }}
-      onClick={() => { setEditMode(false) }}
-
+      onChange={editHandler}
     />
   )
 
   return (
     <div className="flex mb-4 items-center">
-      <ButtonEdit />
-      <p className="w-full text-grey-darkest">
-        {editMode ? <EditTitle /> : title}
-      </p>
+      {editMode ? <>{EditTitle()} <ButtonSave /></> : <>{title} <ButtonEdit /></>}
       {(status === 'new') && <ButtonInProgress />}
       {(status === 'in progress') && <><ButtonBlocked /> <ButtonDone /></>}
       {(status === 'blocked') && <ButtonResume />}

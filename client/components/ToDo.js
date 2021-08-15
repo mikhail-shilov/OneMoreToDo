@@ -6,7 +6,7 @@ import Head from './head'
 import ListOfTasks from './Todo/ListOfTasks';
 import Input from './Todo/Input';
 
-const Dummy = () => {
+const ToDo = () => {
   const { category } = useParams()
   const [tasks, setTasks] = useState([])
 
@@ -76,7 +76,4 @@ const Dummy = () => {
   )
 }
 
-
-Dummy.propTypes = {}
-
-export default React.memo(Dummy)
+export default React.memo(ToDo)

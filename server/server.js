@@ -126,7 +126,7 @@ server.post('/api/v1/tasks/:category', (req, res) => {
     })
 })
 
-// Update status of task from fixed list
+// Update title or status of task. Title must be not empty and status from fixed list
 server.patch('/api/v1/tasks/:category/:id', (req, res) => {
   const { category, id } = req.params
   const fileName = `${fsStore}/${category}.json`
@@ -140,10 +140,6 @@ server.patch('/api/v1/tasks/:category/:id', (req, res) => {
 
   const newTitle = req.body.title
   const newStatus = req.body.status
-
-  console.log('Data input:')
-  console.log(newTitle)
-  console.log(newStatus)
 
   if (typeof newTitle !== 'undefined') {
     if (newTitle !== '') {
@@ -166,8 +162,6 @@ server.patch('/api/v1/tasks/:category/:id', (req, res) => {
   }
 
   if (isSomeToWrite && !withError) {
-    console.log('isSomeToWrite!')
-
     readFile(fileName, { encoding: 'utf8' })
       .then((text) => {
         const tasks = JSON.parse(text)
