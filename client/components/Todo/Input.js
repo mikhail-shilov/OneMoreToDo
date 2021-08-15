@@ -11,11 +11,10 @@ const Input = (props) => {
     props.action(value)
     setValue('')
   }
-
   return (
-    <div>
+    <div className="flex w-full my-4 px-6">
       <input
-        className="shadow appearance-none border rounded py-2 px-3 mr-4 text-grey-darker"
+        className="flex-grow shadow appearance-none border rounded py-2 px-3 mr-4 text-grey-darker"
         placeholder="Add Todo"
         value={value}
         onChange={inputHandler}

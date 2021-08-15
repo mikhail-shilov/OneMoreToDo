@@ -21,6 +21,7 @@ const ListOfTasks = (props) => {
     <div>
       {list}
     </div>
+
   )
 }
 
