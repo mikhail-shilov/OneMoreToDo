@@ -78,7 +78,7 @@ const Task = (props) => {
   )
 
   return (
-    <div className="flex flex-col gap-1.5 my-px p-2  items-center bg-indigo-50	">
+    <div className="flex flex-col gap-1.5 my-px p-2  items-center bg-indigo-50">
       <div className="flex justify-center items-center border w-full p-2">
         {editMode ? <>{EditTitle()} <ButtonSave /></> : <>{Title()} <ButtonEdit /></>}
       </div>
