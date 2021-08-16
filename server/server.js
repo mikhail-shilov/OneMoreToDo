@@ -88,7 +88,8 @@ server.get(['/api/v1/tasks/:category', '/api/v1/tasks/:category/:timespan'], (re
     })
     .catch((err) => {
       if (err.code === 'ENOENT') {
-        res.json({ Status: 'No category' })
+        // res.json({ Status: 'No category' })
+        res.json([])
       } else {
         res.json({ Status: 'Some error', errorLog: err })
       }
@@ -147,8 +148,8 @@ server.patch('/api/v1/tasks/:category/:id', (req, res) => {
       isSomeToWrite = true
     } else {
       withError = true
-      errorLog.taskTitle = 'title can\'t be empty' 
-    } 
+      errorLog.taskTitle = 'title can\'t be empty'
+    }
   }
 
   if (typeof newStatus !== 'undefined') {
@@ -157,8 +158,8 @@ server.patch('/api/v1/tasks/:category/:id', (req, res) => {
       isSomeToWrite = true
     } else {
       withError = true
-      errorLog.taskStatus = 'incorrect status' 
-    } 
+      errorLog.taskStatus = 'incorrect status'
+    }
   }
 
   if (isSomeToWrite && !withError) {
@@ -167,7 +168,7 @@ server.patch('/api/v1/tasks/:category/:id', (req, res) => {
         const tasks = JSON.parse(text)
         const indexOfTask = tasks.findIndex((task) => task.taskId === id)
         if (indexOfTask !== -1) {
-          tasks[indexOfTask] = {...tasks[indexOfTask], ...patch}
+          tasks[indexOfTask] = { ...tasks[indexOfTask], ...patch }
           console.log('tasks[indexOfTask]')
           console.log(tasks[indexOfTask])
           writeFile(fileName, JSON.stringify(tasks), { encoding: 'utf8' })
