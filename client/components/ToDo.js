@@ -77,7 +77,7 @@ const ToDo = () => {
               doDelete={apiDelete}
             />
           </div>
-          <div className="mb-4 pr-6 pl-6 ">
+          <div>
             <Input action={apiCreate} />
           </div>
         </div>

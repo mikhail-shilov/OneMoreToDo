@@ -17,13 +17,13 @@ const Task = (props) => {
   const ButtonEdit = () => (
     <button
       type="button"
-      className="flex-no-shrink p-2 ml-4 mr-1 border-2 rounded hover:text-white text-green border-green hover:bg-green"
+      className="flex-no-shrink p-2 ml-4 mr-1 border-2 w-20 rounded hover:text-white text-green border-green hover:bg-green"
       onClick={() => { setEditMode(true) }}>Edit</button>)
 
   const ButtonSave = () => (
     <button
       type="button"
-      className="flex-no-shrink p-2 ml-4 mr-1 border-2 rounded hover:text-white text-green border-green hover:bg-green"
+      className="flex-no-shrink p-2 ml-4 mr-1 border-2 w-20 rounded hover:text-white text-green border-green hover:bg-green"
       onClick={() => {
         doPatchTitle(taskId, titleValue)
         setEditMode(false)
@@ -32,31 +32,31 @@ const Task = (props) => {
   const ButtonInProgress = () => (
     <button
       type="button"
-      className="flex-no-shrink p-2 ml-2 mr-1 border-2 w-48 rounded hover:text-white text-green border-green hover:bg-green"
+      className="flex-no-shrink p-2 ml-2 mr-1 border-2 w-28 rounded hover:text-white text-green border-green hover:bg-green"
       onClick={() => { doPatchStatus(taskId, INPROGRESS) }}>In progress</button>)
 
   const ButtonBlocked = () => (
     <button
       type="button"
-      className="flex-no-shrink p-2 ml-2 mr-1 border-2 rounded hover:text-white text-green border-green hover:bg-green"
-      onClick={() => { doPatchStatus(taskId, BLOCKED) }}>Blocked</button>)
+      className="flex-no-shrink p-2 ml-2 mr-1 border-2 w-28 rounded hover:text-white text-green border-green hover:bg-green"
+      onClick={() => { doPatchStatus(taskId, BLOCKED) }}>Block</button>)
 
   const ButtonResume = () => (
     <button
       type="button"
-      className="flex-no-shrink p-2 ml-2 mr-1 border-2 rounded hover:text-white text-green border-green hover:bg-green"
+      className="flex-no-shrink p-2 ml-2 mr-1 border-2 w-28 rounded hover:text-white text-green border-green hover:bg-green"
       onClick={() => { doPatchStatus(taskId, INPROGRESS) }}>Resume</button>)
 
   const ButtonDone = () => (
     <button
       type="button"
-      className="flex-no-shrink p-2 ml-2 mr-1 border-2 rounded hover:text-white text-green border-green hover:bg-green"
+      className="flex-no-shrink p-2 ml-2 mr-1 border-2 w-28 rounded hover:text-white text-green border-green hover:bg-green"
       onClick={() => { doPatchStatus(taskId, DONE) }}>Done</button>)
 
   const ButtonRemove = () => (
     <button
       type="button"
-      className="flex-no-shrink p-2 ml-2 mr-1 border-2 rounded hover:text-white text-green border-green hover:bg-green"
+      className="flex-no-shrink p-2 ml-2 mr-1 border-2 w-28 rounded hover:text-white text-green border-green hover:bg-green"
       onClick={() => { doDelete(taskId) }}>Remove</button>)
 
   // const Title = () => (<a onClick={() => { setEditMode(true) }}>{title}</a>)
@@ -72,13 +72,16 @@ const Task = (props) => {
   )
 
   return (
-    <div className="flex my-px px-6 py-2 items-center bg-indigo-50	">
-      {editMode ? <>{EditTitle()} <ButtonSave /></> : <>{title} <ButtonEdit /></>}
-      {(status === 'new') && <ButtonInProgress />}
-      {(status === 'in progress') && <><ButtonBlocked /> <ButtonDone /></>}
-      {(status === 'blocked') && <ButtonResume />}
-      <ButtonRemove />
-
+    <div className="flex flex-col gap-4 my-px px-6 py-2 items-center bg-indigo-50	">
+      <div>
+        {editMode ? <>{EditTitle()} <ButtonSave /></> : <>{title} <ButtonEdit /></>}
+      </div>
+      <div>
+        {(status === 'new') && <ButtonInProgress />}
+        {(status === 'in progress') && <><ButtonBlocked /> <ButtonDone /></>}
+        {(status === 'blocked') && <ButtonResume />}
+        <ButtonRemove />
+      </div>
     </div>
   )
 }
