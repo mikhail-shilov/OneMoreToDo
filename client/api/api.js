@@ -1,5 +1,9 @@
 import * as axios from "axios";
 
+export const DONE = 'done'
+export const INPROGRESS = 'in progress'
+export const BLOCKED = 'blocked'
+
 const toDoApi = axios.create({
     baseURL: '/api/v1/'
 });
@@ -28,5 +32,6 @@ const api = {
         toDoApi.delete(`tasks/${category}/${id}`).then(data => data.data.status)
     }
 }
+
 
 export default api
