@@ -11,7 +11,7 @@ import cookieParser from 'cookie-parser'
 import config from './config'
 import Html from '../client/html'
 
-const { readFile, writeFile } = require('fs').promises
+const { readFile, writeFile, readdir } = require('fs').promises
 
 require('colors')
 
@@ -95,6 +95,31 @@ server.get(['/api/v1/tasks/:category', '/api/v1/tasks/:category/:timespan'], (re
       }
     })
 })
+
+// List of exist category (names of JSON files in storage directory)
+server.get(['/api/v1/categories'], (req, res) => {
+  try {
+    readdir(fsStore)
+      .then((files) => {
+        return files.reduce((categoryNames, fileName) => {
+          const lastDotIndex = fileName.lastIndexOf('.')
+          const fileExtention = fileName.slice(lastDotIndex)
+          if (fileExtention === '.json') {
+            const categoryName = fileName.slice(0, lastDotIndex)
+            categoryNames.push(categoryName)
+          }
+          return categoryNames
+        }, [])
+      })
+      .then((categoryNames) => {
+        res.json({ Categories: categoryNames })
+        console.log(categoryNames)
+      });
+  } catch (err) {
+    console.error(err);
+  }
+})
+
 
 // Add some task. Если файл категории не существует - он будет создан.
 server.post('/api/v1/tasks/:category', (req, res) => {
