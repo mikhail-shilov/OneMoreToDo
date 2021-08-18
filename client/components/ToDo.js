@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import axios from 'axios'
 import api from '../api/api'
 
 import Head from './head'
@@ -10,64 +9,19 @@ import Input from './Todo/Input'
 
 const ToDo = () => {
   const { category, timespan } = useParams()
-  const [categoryes, setCategoryes] = useState([])
-  const [tasks, setTasks] = useState([])
 
-  // Functions, that work with API
-  const apiLoad = (time) => {
-    const url = `/api/v1/tasks/${category}${(typeof time !== 'undefined') ? `/${time}` : ''}`
-    console.log(url)
-    axios.get(url).then(data => {
-      console.log('Updated list of tasks...')
-      setTasks(data.data)
-    })
-  }
-  const apiCreate = (title) => {
-    axios.post(`/api/v1/tasks/${category}`, { title }).then(data => {
-      apiLoad();
-      console.log(data.data.Status)
-    })
-  }
-  const apiPatch = (id, update) => {
-    axios.patch(`/api/v1/tasks/${category}/${id}`, update).then(data => {
-      apiLoad();
-      console.log(data.data.Status)
-    })
-  }
-  const apiPatchTitle = (id, newTitle) => {
-    const update = { title: newTitle }
-    apiPatch(id, update)
-  }
-  const apiPatchStatus = (id, newStatus) => {
-    const update = { status: newStatus }
-    apiPatch(id, update)
-  }
-  const apiDelete = (id) => {
-    axios.delete(`/api/v1/tasks/${category}/${id}`).then(data => {
-      apiLoad();
-      console.log(data.data.Status)
-    })
-  }
-
-  const apiLoadCategories = () => {
-    axios.get(`/api/v1/categories`).then(data => {
-      setCategoryes(data.data.categories);
-      console.log('Updated list of categoryes')
-    })
-  }
+  const [listCategoryes, setCategoryes] = useState([])
+  const [listTasks, setTasks] = useState([])
 
   // Loading categories at start
   useEffect(() => {
-    apiLoadCategories()
-    console.log(timespan)
-  }, [])
+    api.loadCategories().then(result => { setCategoryes(result) })
+  }, [category])
 
   // Loading tasks at start and when category changed
   useEffect(() => {
-    api.loadTasks('home', 'mounth').then(result => { setTasks(result) })
-  }, [category])
-
-
+    api.loadTasks(category, timespan).then(result => { setTasks(result) })
+  }, [category, timespan])
 
   return (
     <div>
@@ -83,28 +37,25 @@ const ToDo = () => {
             </h2>
             <div className="text-xs text-center mb-1"><Link to='/'>Go to categories list</Link></div>
             <div className="text-sm text-grey-darkest text-center">
-              <Link className="mx-1" to='/home'>all</Link>
-              <Link className="mx-1" to='/work'>day</Link>
-              <Link className="mx-1" to='/work'>week</Link>
-              <Link className="mx-1" to='/work'>mounth</Link>
+              <Link className="mx-1" to={`/${category}/`}>all</Link>
+              <Link className="mx-1" to={`/${category}/day`}>day</Link>
+              <Link className="mx-1" to={`/${category}/week`}>week</Link>
+              <Link className="mx-1" to={`/${category}/mounth`}>mounth</Link>
             </div>
           </div>
           <div>
-            <Input action={apiCreate} />
+            <Input />
           </div>
           <div>
             {(typeof category === 'undefined')
               ? <ListCategories
-                categories={categoryes} />
+                categories={listCategoryes} />
               : <ListOfTasks
-                tasks={tasks}
-                doPatchTitle={apiPatchTitle}
-                doPatchStatus={apiPatchStatus}
-                doDelete={apiDelete} />
+                tasks={listTasks} />
             }
           </div>
           <div>
-            <Input action={apiCreate} />
+            <Input />
           </div>
         </div>
       </div>
