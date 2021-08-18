@@ -57,12 +57,14 @@ const ToDo = () => {
   }
 
   // Loading categories at start
-  useEffect(() => { apiLoadCategories() }, [])
+  useEffect(() => {
+    apiLoadCategories()
+    console.log(timespan)
+  }, [])
 
   // Loading tasks at start and when category changed
   useEffect(() => {
-    setTasks(api.loadTasks('home', 'week'))
-    console.log(timespan)
+    api.loadTasks('home', 'mounth').then(result => { setTasks(result) })
   }, [category])
 
 
