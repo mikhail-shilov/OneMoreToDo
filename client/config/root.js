@@ -21,7 +21,7 @@ const RootComponent = (props) => {
       <RouterSelector history={history} location={props.location} context={props.context}>
         <Startup>
           <Switch>
-            <Route exact path="/:category?" component={ToDo} />
+            <Route exact path="/:category?/:timespan?" component={ToDo} />
 
             <Route exact path="old/:category?" component={Dummy} />
 

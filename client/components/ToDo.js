@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import axios from 'axios';
+import axios from 'axios'
+import api from '../api/api'
 
 import Head from './head'
-import ListOfTasks from './Todo/ListOfTasks';
-import Input from './Todo/Input';
+import ListOfTasks from './Todo/ListOfTasks'
+import ListCategories from './Todo/ListCategories'
+import Input from './Todo/Input'
 
 const ToDo = () => {
-  const { category } = useParams()
+  const { category, timespan } = useParams()
+  const [categoryes, setCategoryes] = useState([])
   const [tasks, setTasks] = useState([])
 
   // Functions, that work with API
-  const apiLoad = () => {
-    axios.get(`/api/v1/tasks/${category}`).then(data => {
+  const apiLoad = (time) => {
+    const url = `/api/v1/tasks/${category}${(typeof time !== 'undefined') ? `/${time}` : ''}`
+    console.log(url)
+    axios.get(url).then(data => {
       console.log('Updated list of tasks...')
       setTasks(data.data)
     })
@@ -44,8 +49,23 @@ const ToDo = () => {
     })
   }
 
+  const apiLoadCategories = () => {
+    axios.get(`/api/v1/categories`).then(data => {
+      setCategoryes(data.data.categories);
+      console.log('Updated list of categoryes')
+    })
+  }
+
+  // Loading categories at start
+  useEffect(() => { apiLoadCategories() }, [])
+
   // Loading tasks at start and when category changed
-  useEffect(() => { apiLoad() }, [category])
+  useEffect(() => {
+    setTasks(api.loadTasks('home', 'week'))
+    console.log(timespan)
+  }, [category])
+
+
 
   return (
     <div>
@@ -59,6 +79,7 @@ const ToDo = () => {
             <h2 className="text-lg text-grey-darkest text-center">
               Active category: {(typeof category !== "undefined") ? `${category}` : 'not selected...'}
             </h2>
+            <div className="text-xs text-center mb-1"><Link to='/'>Go to categories list</Link></div>
             <div className="text-sm text-grey-darkest text-center">
               <Link className="mx-1" to='/home'>all</Link>
               <Link className="mx-1" to='/work'>day</Link>
@@ -70,12 +91,15 @@ const ToDo = () => {
             <Input action={apiCreate} />
           </div>
           <div>
-            <ListOfTasks
-              tasks={tasks}
-              doPatchTitle={apiPatchTitle}
-              doPatchStatus={apiPatchStatus}
-              doDelete={apiDelete}
-            />
+            {(typeof category === 'undefined')
+              ? <ListCategories
+                categories={categoryes} />
+              : <ListOfTasks
+                tasks={tasks}
+                doPatchTitle={apiPatchTitle}
+                doPatchStatus={apiPatchStatus}
+                doDelete={apiDelete} />
+            }
           </div>
           <div>
             <Input action={apiCreate} />

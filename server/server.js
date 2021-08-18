@@ -56,7 +56,7 @@ server.get(['/api/v1/tasks/:category', '/api/v1/tasks/:category/:timespan'], (re
       })
       // If timestamp is active - filter tasks by date
       if (safeTimespans.includes(timespan)) {
-        let periodOfTime = 0
+        let periodOfTime = null
         // May change this switch to object { day: 1000 * 60 * 60 * 2 }
         switch (timespan) {
           case 'day':
@@ -88,10 +88,9 @@ server.get(['/api/v1/tasks/:category', '/api/v1/tasks/:category/:timespan'], (re
     })
     .catch((err) => {
       if (err.code === 'ENOENT') {
-        // res.json({ Status: 'No category' })
         res.json([])
       } else {
-        res.json({ Status: 'Some error', errorLog: err })
+        res.json({ status: 'some error', errorLog: err })
       }
     })
 })
@@ -112,14 +111,13 @@ server.get(['/api/v1/categories'], (req, res) => {
         }, [])
       })
       .then((categoryNames) => {
-        res.json({ Categories: categoryNames })
+        res.json({ status: 'ok', categories: categoryNames })
         console.log(categoryNames)
       });
   } catch (err) {
     console.error(err);
   }
 })
-
 
 // Add some task. Если файл категории не существует - он будет создан.
 server.post('/api/v1/tasks/:category', (req, res) => {
@@ -139,15 +137,15 @@ server.post('/api/v1/tasks/:category', (req, res) => {
       const existedTasks = JSON.parse(text)
       const taskList = [...existedTasks, newTask]
       writeFile(fileName, JSON.stringify(taskList), { encoding: 'utf8' })
-      res.json({ Status: 'Ok!' })
+      res.json({ status: 'ok' })
     })
     .catch((err) => {
       if (err.code === 'ENOENT') {
         const taskList = [newTask]
         writeFile(fileName, JSON.stringify(taskList), { encoding: 'utf8' })
-        res.json({ Status: 'Ok!' })
+        res.json({ status: 'ok' })
       } else {
-        res.json({ Status: 'JSON parse error!' })
+        res.json({ status: 'JSON parse error!' })
       }
     })
 })
@@ -197,9 +195,9 @@ server.patch('/api/v1/tasks/:category/:id', (req, res) => {
           console.log('tasks[indexOfTask]')
           console.log(tasks[indexOfTask])
           writeFile(fileName, JSON.stringify(tasks), { encoding: 'utf8' })
-          res.json({ Status: 'Ok' })
+          res.json({ status: 'Ok' })
         } else {
-          res.json({ Status: 'Error', Message: 'Element not found' })
+          res.json({ status: 'Error', Message: 'Element not found' })
         }
       })
       .catch((err) => {
@@ -226,9 +224,9 @@ server.delete('/api/v1/tasks/:category/:id', (req, res) => {
         field = '_deletedAt'
         tasks[indexOfTask][field] = +new Date()
         writeFile(fileName, JSON.stringify(tasks), { encoding: 'utf8' })
-        res.json({ Status: 'Ok' })
+        res.json({ status: 'ok' })
       } else {
-        res.json({ Status: 'Error', Message: 'Element not found' })
+        res.json({ status: 'error', message: 'element not found' })
       }
     })
     .catch((err) => {

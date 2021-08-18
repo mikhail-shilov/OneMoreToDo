@@ -3,7 +3,7 @@ import Task from './Task'
 
 const ListOfTasks = (props) => {
 
-  const list = props.tasks.map((task) => {
+  const list = (typeof props.tasks === 'undefined')? []: props.tasks.map((task) => {
     return (
       <Task
         key={task.taskId}
