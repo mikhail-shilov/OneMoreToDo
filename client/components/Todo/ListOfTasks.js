@@ -2,17 +2,15 @@ import React from 'react'
 import Task from './task/Task'
 
 const ListOfTasks = (props) => {
-
-  const list = (typeof props.tasks === 'undefined')? []: props.tasks.map((task) => {
+  const list = (typeof props.tasks === 'undefined') ? [] : props.tasks.map((task) => {
     return (
       <Task
+        category={props.category}
         key={task.taskId}
         taskId={task.taskId}
         title={task.title}
         status={task.status}
-        doPatchTitle={props.doPatchTitle}
-        doPatchStatus={props.doPatchStatus}
-        doDelete={props.doDelete}
+        refresh={props.refresh}
       />
     )
   })

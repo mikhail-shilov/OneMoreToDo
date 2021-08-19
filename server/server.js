@@ -63,7 +63,7 @@ server.get(['/api/v1/tasks/:category', '/api/v1/tasks/:category/:timespan'], (re
             periodOfTime = 1000 * 60 * 60 * 24
             break
           case 'week':
-            periodOfTime = 7 * 1000 * 60 * 60 * 2
+            periodOfTime = 7 * 1000 * 60 * 60 * 24
             break
           case 'month':
             periodOfTime = 30 * 1000 * 60 * 60 * 24

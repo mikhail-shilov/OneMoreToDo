@@ -10,8 +10,19 @@ import Input from './Todo/Input'
 const ToDo = () => {
   const { category, timespan } = useParams()
 
+  const [activeCategory, setActiveCategory] = useState(null)
   const [listCategoryes, setCategoryes] = useState([])
   const [listTasks, setTasks] = useState([])
+
+  const refresh = () => {
+    console.log('Refresh tasks...')
+    api.loadTasks(category, timespan).then(result => { setTasks(result) })
+  }
+
+  // Set active categorie to state
+  useEffect(() => {
+    setActiveCategory(category)
+  }, [category])
 
   // Loading categories at start
   useEffect(() => {
@@ -44,18 +55,21 @@ const ToDo = () => {
             </div>
           </div>
           <div>
-            <Input />
+            <Input category={category} refresh={refresh} />
           </div>
           <div>
             {(typeof category === 'undefined')
               ? <ListCategories
                 categories={listCategoryes} />
               : <ListOfTasks
-                tasks={listTasks} />
+                category={activeCategory}
+                tasks={listTasks}
+                refresh={refresh} />
             }
           </div>
           <div>
-            <Input />
+            
+            <Input category={category} refresh={refresh} />
           </div>
         </div>
       </div>

@@ -1,13 +1,7 @@
 import React from 'react'
+import { INPROGRESS, DONE, BLOCKED } from '../../../../api/api'
 
-import Title from './Title'
-
-const Task = (props) => {
-  const { category, taskId, title, status, refresh, doPatchStatus, doDelete } = props
-
-  const DONE = 'done'
-  const INPROGRESS = 'in progress'
-  const BLOCKED = 'blocked'
+const Status = (props) => {
 
   const ButtonInProgress = () => (
     <button
@@ -33,24 +27,13 @@ const Task = (props) => {
       className="flex-no-shrink px-2 py-1 mx-1 mr-1 border-2 w-28 rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500"
       onClick={() => { doPatchStatus(taskId, DONE) }}>Done</button>)
 
-  const ButtonRemove = () => (
-    <button
-      type="button"
-      className="flex-no-shrink px-2 py-1 mx-1 border-2 w-28 rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500"
-      onClick={() => { doDelete(taskId) }}>Remove</button>)
-
   return (
-    <div className="flex flex-col gap-1.5 my-px p-2  items-center bg-indigo-50">
-      <Title category={category} taskId={taskId} title={title} refresh={refresh} />
-
-      <div>
-        {(status === 'new') && <ButtonInProgress />}
-        {(status === 'in progress') && <><ButtonBlocked /> <ButtonDone /></>}
-        {(status === 'blocked') && <ButtonResume />}
-        <ButtonRemove />
-      </div>
-    </div>
+    <>
+      {(status === 'new') && <ButtonInProgress />}
+      {(status === 'in progress') && <><ButtonBlocked /> <ButtonDone /></>}
+      {(status === 'blocked') && <ButtonResume />}
+    </>
   )
 }
 
-export default Task
+export default Status
