@@ -19,14 +19,14 @@ const api = {
     create(category, title) {
         return toDoApi.post(`tasks/${category}`, { title }).then(data => data.data.status)
     },
-    patch(category, id, field, value) {
-        return toDoApi.patch(`tasks/${category}/${id}`, { [field]: value }).then(data => data.data.status)
+    patch(category, taskId, field, value) {
+        return toDoApi.patch(`tasks/${category}/${taskId}`, { [field]: value }).then(data => data.data.status)
     },
-    patchMass(category, id, objWithUpdate) {
-        return toDoApi.patch(`tasks/${category}/${id}`, objWithUpdate).then(data => data.data.status)
+    patchMass(category, taskId, objWithUpdate) {
+        return toDoApi.patch(`tasks/${category}/${taskId}`, objWithUpdate).then(data => data.data.status)
     },
-    delete(category, id) {
-        return toDoApi.delete(`tasks/${category}/${id}`).then(data => data.data.status)
+    delete(category, taskId) {
+        return toDoApi.delete(`tasks/${category}/${taskId}`).then(data => data.data.status)
     }
 }
 

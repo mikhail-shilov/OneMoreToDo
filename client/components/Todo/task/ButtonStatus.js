@@ -1,31 +1,46 @@
 import React from 'react'
-import { INPROGRESS, DONE, BLOCKED } from '../../../api/api'
+import api, { INPROGRESS, DONE, BLOCKED } from '../../../api/api'
+
+const FIELD_STATUS = 'status'
 
 const Status = (props) => {
+  const { category, taskId, status, refresh } = props
 
   const InProgress = () => (
     <button
       type="button"
       className="flex-no-shrink px-2 py-1 mx-1 border-2 w-28 rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500"
-      onClick={() => { doPatchStatus(taskId, INPROGRESS) }}>In progress</button>)
+      onClick={() => {
+        api.patch(category, taskId, FIELD_STATUS, INPROGRESS)
+        .then(() => { refresh() })
+      }}>In progress</button>)
 
   const Blocked = () => (
     <button
       type="button"
       className="flex-no-shrink px-2 py-1 mx-1 border-2 w-28 rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500"
-      onClick={() => { doPatchStatus(taskId, BLOCKED) }}>Block</button>)
+      onClick={() => {
+        api.patch(category, taskId, FIELD_STATUS, BLOCKED)
+        .then(() => { refresh() })
+      }}>Block</button>)
 
   const Resume = () => (
     <button
       type="button"
       className="flex-no-shrink px-2 py-1 mx-1 mr-1 border-2 w-28 rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500"
-      onClick={() => { doPatchStatus(taskId, INPROGRESS) }}>Resume</button>)
+      onClick={() => {
+        api.patch(category, taskId, FIELD_STATUS, INPROGRESS)
+        .then(() => { refresh() })
+      }}>Resume</button>)
 
   const Done = () => (
     <button
       type="button"
       className="flex-no-shrink px-2 py-1 mx-1 mr-1 border-2 w-28 rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500"
-      onClick={() => { doPatchStatus(taskId, DONE) }}>Done</button>)
+      onClick={() => {
+        api.patch(category, taskId, FIELD_STATUS, DONE)
+        .then(() => { refresh() })
+      }}>Done</button>)
 
   return (
     <>
