@@ -11,10 +11,7 @@ const toDoApi = axios.create({
 const api = {
     loadTasks(category, timespan) {
         const url = `tasks/${category}${(typeof timespan !== 'undefined') ? `/${timespan}` : ''}`
-        return toDoApi.get(url).then(data => {
-            console.log(data.data)
-            return data.data
-        })
+        return toDoApi.get(url).then(data => data.data)
     },
     loadCategories() {
         return toDoApi.get(`categories/`).then(data => data.data.categories)
@@ -22,8 +19,8 @@ const api = {
     create(category, title) {
         return toDoApi.post(`tasks/${category}`, { title }).then(data => data.data.status)
     },
-    patch(category, id, key, value) {
-        return toDoApi.patch(`tasks/${category}/${id}`, { [key]: value }).then(data => data.data.status)
+    patch(category, id, field, value) {
+        return toDoApi.patch(`tasks/${category}/${id}`, { [field]: value }).then(data => data.data.status)
     },
     patchMass(category, id, objWithUpdate) {
         return toDoApi.patch(`tasks/${category}/${id}`, objWithUpdate).then(data => data.data.status)

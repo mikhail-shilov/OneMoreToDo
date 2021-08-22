@@ -53,7 +53,6 @@ const Title = (props) => {
     <div className="flex justify-center items-center border w-full p-2">
       {editMode ? EditTitle() : Title2()}
       {EditorButton()}
-      {category}
     </div>
   )
 }
