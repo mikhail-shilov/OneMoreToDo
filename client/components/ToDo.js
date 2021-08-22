@@ -36,7 +36,7 @@ const ToDo = () => {
 
   return (
     <div>
-      <Head title="Hello" />
+      <Head title="This is OneMoreToDo React SPA" />
       <div className="h-100 w-full flex items-center justify-center bg-teal-lightest font-sans">
         <div className="main-wrapper bg-white rounded shadow m-4 w-full lg:w-3/4 lg:max-w-lg">
           <div className="header mb-4 p-6 bg-indigo-200	">
