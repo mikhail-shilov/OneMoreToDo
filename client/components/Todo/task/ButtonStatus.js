@@ -1,27 +1,27 @@
 import React from 'react'
-import { INPROGRESS, DONE, BLOCKED } from '../../../../api/api'
+import { INPROGRESS, DONE, BLOCKED } from '../../../api/api'
 
 const Status = (props) => {
 
-  const ButtonInProgress = () => (
+  const InProgress = () => (
     <button
       type="button"
       className="flex-no-shrink px-2 py-1 mx-1 border-2 w-28 rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500"
       onClick={() => { doPatchStatus(taskId, INPROGRESS) }}>In progress</button>)
 
-  const ButtonBlocked = () => (
+  const Blocked = () => (
     <button
       type="button"
       className="flex-no-shrink px-2 py-1 mx-1 border-2 w-28 rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500"
       onClick={() => { doPatchStatus(taskId, BLOCKED) }}>Block</button>)
 
-  const ButtonResume = () => (
+  const Resume = () => (
     <button
       type="button"
       className="flex-no-shrink px-2 py-1 mx-1 mr-1 border-2 w-28 rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500"
       onClick={() => { doPatchStatus(taskId, INPROGRESS) }}>Resume</button>)
 
-  const ButtonDone = () => (
+  const Done = () => (
     <button
       type="button"
       className="flex-no-shrink px-2 py-1 mx-1 mr-1 border-2 w-28 rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500"
@@ -29,9 +29,9 @@ const Status = (props) => {
 
   return (
     <>
-      {(status === 'new') && <ButtonInProgress />}
-      {(status === 'in progress') && <><ButtonBlocked /> <ButtonDone /></>}
-      {(status === 'blocked') && <ButtonResume />}
+      {(status === 'new') && <InProgress />}
+      {(status === 'in progress') && <><Blocked /> <Done /></>}
+      {(status === 'blocked') && <Resume />}
     </>
   )
 }

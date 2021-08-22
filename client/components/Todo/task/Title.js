@@ -42,7 +42,7 @@ const Title = (props) => {
     />
   )
 
-  const Title2 = () => (
+  const ShowTitle = () => (
     <a className='flex-grow justify-center'>
       {title}
     </a>
@@ -51,7 +51,7 @@ const Title = (props) => {
 
   return (
     <div className="flex justify-center items-center border w-full p-2">
-      {editMode ? EditTitle() : Title2()}
+      {editMode ? EditTitle() : ShowTitle()}
       {EditorButton()}
     </div>
   )

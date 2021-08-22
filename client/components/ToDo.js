@@ -68,7 +68,6 @@ const ToDo = () => {
             }
           </div>
           <div>
-            
             <Input category={category} refresh={refresh} />
           </div>
         </div>

@@ -1,9 +1,10 @@
 import React from 'react'
 
 import Title from './Title'
+import ButtonRemove from './ButtonRemove'
 
 const Task = (props) => {
-  const { category, taskId, title, status, refresh, doPatchStatus, doDelete } = props
+  const { category, taskId, title, status, refresh, doPatchStatus } = props
 
   const DONE = 'done'
   const INPROGRESS = 'in progress'
@@ -33,12 +34,6 @@ const Task = (props) => {
       className="flex-no-shrink px-2 py-1 mx-1 mr-1 border-2 w-28 rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500"
       onClick={() => { doPatchStatus(taskId, DONE) }}>Done</button>)
 
-  const ButtonRemove = () => (
-    <button
-      type="button"
-      className="flex-no-shrink px-2 py-1 mx-1 border-2 w-28 rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500"
-      onClick={() => { doDelete(taskId) }}>Remove</button>)
-
   return (
     <div className="flex flex-col gap-1.5 my-px p-2  items-center bg-indigo-50">
       <Title category={category} taskId={taskId} title={title} refresh={refresh} />
@@ -47,7 +42,7 @@ const Task = (props) => {
         {(status === 'new') && <ButtonInProgress />}
         {(status === 'in progress') && <><ButtonBlocked /> <ButtonDone /></>}
         {(status === 'blocked') && <ButtonResume />}
-        <ButtonRemove />
+        <ButtonRemove category={category} taskId={taskId} refresh={refresh} />
       </div>
     </div>
   )
