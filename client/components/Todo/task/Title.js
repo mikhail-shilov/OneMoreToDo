@@ -22,6 +22,12 @@ const Title = (props) => {
        })
       .catch(err => { console.log(err) })
   }
+  
+  const keyHandler = (event) => {
+    if(event.key === 'Enter'){
+      doSave()
+    }
+  }
 
   const EditorButton = () => (
     <button
@@ -39,6 +45,7 @@ const Title = (props) => {
       className="shadow flex-grow appearance-none border rounded py-2 px-3 mr-4 text-grey-darker"
       value={titleValue}
       onChange={inputHandler}
+      onKeyPress={keyHandler}
     />
   )
 

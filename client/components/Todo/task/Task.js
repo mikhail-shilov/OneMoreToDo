@@ -10,11 +10,8 @@ const Task = (props) => {
   return (
     <div className="flex flex-col gap-1.5 my-px p-2  items-center bg-indigo-50">
       <Title category={category} taskId={taskId} title={title} refresh={refresh} />
-
       <div>
-
         <ButtonStatus category={category} taskId={taskId} status={status} refresh={refresh} />
-
         <ButtonRemove category={category} taskId={taskId} refresh={refresh} />
       </div>
     </div>
