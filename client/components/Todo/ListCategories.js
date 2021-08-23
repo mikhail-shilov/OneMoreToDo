@@ -1,9 +1,25 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import api from '../../api/api'
 
-const ListCategories = (props) => {
+import Placeholder from './Placeholder'
 
-  const list = props.categories.map((category, index) => {
+const ListCategories = () => {
+  const [isLoadingCategoryes, setLoadingCategoryes] = useState(false)
+  const [listCategoryes, setCategoryes] = useState([])
+
+  // Loading categories at start
+  useEffect(() => {
+    console.log('Loading categoryes...')
+    setLoadingCategoryes(true)
+    api.loadCategories()
+      .then(result => {
+        setCategoryes(result)
+        setLoadingCategoryes(false)
+      })
+  }, [])
+
+  const list = listCategoryes.map((category, index) => {
     return (
       <div
         key={index}
@@ -13,12 +29,9 @@ const ListCategories = (props) => {
     )
   })
 
-  return (
-    <div>
-      {list}
-    </div>
-
+  return (<div>
+    {!isLoadingCategoryes ? list : Placeholder()}
+  </div>
   )
 }
-
 export default ListCategories

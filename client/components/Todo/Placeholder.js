@@ -2,7 +2,7 @@ import React from 'react'
 
 const Placeholder = () => {
   return (
-    <div>
+    <div className='text-center'>
       Loading...
     </div>
   )

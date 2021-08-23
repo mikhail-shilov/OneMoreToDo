@@ -22,9 +22,6 @@ const ListOfTasks = (props) => {
       No items to display...
     </div>)
 
-
-
-
   return (
     <div>
       {tasks.length !== 0 ? items : noTasks()}

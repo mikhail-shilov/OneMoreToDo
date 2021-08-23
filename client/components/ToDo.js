@@ -6,13 +6,15 @@ import Head from './head'
 import ListOfTasks from './Todo/ListOfTasks'
 import ListCategories from './Todo/ListCategories'
 import Input from './Todo/Input'
+import Placeholder from './Todo/Placeholder'
 
 const ToDo = () => {
   const { category, timespan } = useParams()
 
   const [activeCategory, setActiveCategory] = useState(null)
-  const [listCategoryes, setCategoryes] = useState([])
   const [listTasks, setTasks] = useState([])
+
+  const [isLoadingTasks, setLoadingTasks] = useState(false)
 
   const refresh = () => {
     console.log('Refresh tasks...')
@@ -24,15 +26,40 @@ const ToDo = () => {
     setActiveCategory(category)
   }, [category])
 
-  // Loading categories at start
-  useEffect(() => {
-    api.loadCategories().then(result => { setCategoryes(result) })
-  }, [category])
+
 
   // Loading tasks at start and when category changed
   useEffect(() => {
-    api.loadTasks(category, timespan).then(result => { setTasks(result) })
+    console.log('UseEffect2')
+    if (typeof category !== 'undefined') {
+      setLoadingTasks(true)
+      api.loadTasks(category, timespan)
+      .then(result => {
+        setTasks(result)
+        setLoadingTasks(false)
+      })
+    }
   }, [category, timespan])
+
+  const MainPage = () => (
+    <>
+      <div>
+        <Input category={category} refresh={refresh} />
+      </div>
+      <div>
+        {(typeof category === 'undefined')
+          ? <ListCategories />
+          : <ListOfTasks
+            category={activeCategory}
+            tasks={listTasks}
+            refresh={refresh} />
+        }
+      </div>
+      <div>
+        <Input category={category} refresh={refresh} />
+      </div>
+    </>
+  )
 
   return (
     <div>
@@ -54,22 +81,8 @@ const ToDo = () => {
               <Link className="mx-1" to={`/${category}/mounth`}>mounth</Link>
             </div>
           </div>
-          <div>
-            <Input category={category} refresh={refresh} />
-          </div>
-          <div>
-            {(typeof category === 'undefined')
-              ? <ListCategories
-                categories={listCategoryes} />
-              : <ListOfTasks
-                category={activeCategory}
-                tasks={listTasks}
-                refresh={refresh} />
-            }
-          </div>
-          <div>
-            <Input category={category} refresh={refresh} />
-          </div>
+          {!isLoadingTasks ? MainPage() : <Placeholder />}
+
         </div>
       </div>
     </div>
