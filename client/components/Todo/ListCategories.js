@@ -29,9 +29,10 @@ const ListCategories = () => {
     )
   })
 
-  return (<div>
-    {!isLoadingCategoryes ? list : Placeholder()}
-  </div>
+  return (
+    <div>
+      {!isLoadingCategoryes ? list : Placeholder()}
+    </div>
   )
 }
 export default ListCategories

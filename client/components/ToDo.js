@@ -30,7 +30,7 @@ const ToDo = () => {
 
   // Loading tasks at start and when category changed
   useEffect(() => {
-    console.log('UseEffect2')
+    console.log('Loading tasks...')
     if (typeof category !== 'undefined') {
       setLoadingTasks(true)
       api.loadTasks(category, timespan)
