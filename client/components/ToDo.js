@@ -1,65 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import api from '../api/api'
 
 import Head from './head'
 import ListOfTasks from './Todo/ListOfTasks'
 import ListCategories from './Todo/ListCategories'
-import Input from './Todo/Input'
-import Placeholder from './Todo/Placeholder'
 
 const ToDo = () => {
   const { category, timespan } = useParams()
 
   const [activeCategory, setActiveCategory] = useState(null)
-  const [listTasks, setTasks] = useState([])
+  const [activeTimespan, setTimespan] = useState(null)
 
-  const [isLoadingTasks, setLoadingTasks] = useState(false)
-
-  const refresh = () => {
-    console.log('Refresh tasks...')
-    api.loadTasks(category, timespan).then(result => { setTasks(result) })
-  }
-
-  // Set active categorie to state
+  // Set params to state
   useEffect(() => {
-    setActiveCategory(category)
-  }, [category])
-
-
-
-  // Loading tasks at start and when category changed
-  useEffect(() => {
-    console.log('Loading tasks...')
-    if (typeof category !== 'undefined') {
-      setLoadingTasks(true)
-      api.loadTasks(category, timespan)
-      .then(result => {
-        setTasks(result)
-        setLoadingTasks(false)
-      })
-    }
+    console.log('change params')
+    if (typeof category !== 'undefined') setActiveCategory(category)
+    setTimespan(timespan)
   }, [category, timespan])
 
-  const MainPage = () => (
-    <>
-      <div>
-        <Input category={category} refresh={refresh} />
-      </div>
-      <div>
-        {(typeof category === 'undefined')
-          ? <ListCategories />
-          : <ListOfTasks
-            category={activeCategory}
-            tasks={listTasks}
-            refresh={refresh} />
-        }
-      </div>
-      <div>
-        <Input category={category} refresh={refresh} />
-      </div>
-    </>
-  )
+
 
   return (
     <div>
@@ -81,8 +40,10 @@ const ToDo = () => {
               <Link className="mx-1" to={`/${category}/mounth`}>mounth</Link>
             </div>
           </div>
-          {!isLoadingTasks ? MainPage() : <Placeholder />}
-
+          {(typeof category === "undefined") ? <ListCategories />
+            : <ListOfTasks
+              category={activeCategory}
+              timespan={activeTimespan} />}
         </div>
       </div>
     </div>
