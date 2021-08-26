@@ -7,7 +7,6 @@ import store, { history } from '../redux'
 
 import Home from '../components/home'
 import ToDo from '../components/ToDo'
-import Dummy from '../components/dummy-view'
 import NotFound from '../components/404'
 
 import Startup from './startup'
@@ -22,9 +21,6 @@ const RootComponent = (props) => {
         <Startup>
           <Switch>
             <Route exact path="/:category?/:timespan?" component={ToDo} />
-
-            <Route exact path="old/:category?" component={Dummy} />
-
             <Route exact path="/dashboard" component={Home} />
             <Route component={NotFound} />
           </Switch>

@@ -44,6 +44,7 @@ const Status = (props) => {
 
   return (
     <>
+      <a>Now: {status}</a>
       {(status === 'new') && <InProgress />}
       {(status === 'in progress') && <><Blocked /> <Done /></>}
       {(status === 'blocked') && <Resume />}

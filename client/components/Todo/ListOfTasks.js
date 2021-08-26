@@ -17,14 +17,20 @@ const ListOfTasks = (props) => {
 
   // Loading tasks at start and when category changed
   useEffect(() => {
-    console.log('Loading tasks...')
     if (typeof category !== 'undefined') {
+      console.log('Loading tasks...')
+      console.log(`Category: ${category}, timespan: ${timespan}`)
+
       setLoadingTasks(true)
       api.loadTasks(category, timespan)
         .then(result => {
-          console.log('Some here...')
-          console.log(result)
-          setTasks(result)
+          if (result.status === 'ok') {
+            console.log('Task loaded.')
+            setTasks(result.tasks)
+          } else {
+            setTasks([])
+            console.log('Error! Task not loaded.')
+          }
           setLoadingTasks(false)
         })
     }
@@ -39,7 +45,7 @@ const ListOfTasks = (props) => {
         taskId={task.taskId}
         title={task.title}
         status={task.status}
-        refresh={props.refresh}
+        refresh={refresh}
       />
     )
   })

@@ -84,13 +84,14 @@ server.get(['/api/v1/tasks/:category', '/api/v1/tasks/:category/:timespan'], (re
         const pubKeys = Object.keys(task).filter((item) => item.match(/^[^_].*/gm))
         return pubKeys.reduce((nonPrivateKey, key) => ({ ...nonPrivateKey, [key]: task[key] }), {})
       })
-      res.json(tasks)
+      res.json({ status: 'ok', tasks })
     })
     .catch((err) => {
       if (err.code === 'ENOENT') {
-        res.json([])
+        res.json({ status: 'ok', tasks: [] })
       } else {
-        res.json({ status: 'some error', errorLog: err })
+        console.log(err)
+        res.json({ status: 'error', log: err })
       }
     })
 })
@@ -112,14 +113,13 @@ server.get(['/api/v1/categories'], (req, res) => {
       })
       .then((categoryNames) => {
         res.json({ status: 'ok', categories: categoryNames })
-        console.log(categoryNames)
-      });
+      })
   } catch (err) {
-    console.error(err);
+    console.error(err)
   }
 })
 
-// Add some task. Если файл категории не существует - он будет создан.
+// Add some task. Create new category if it not exist
 server.post('/api/v1/tasks/:category', (req, res) => {
   const { category } = req.params
   const fileName = `${fsStore}/${category}.json`
@@ -159,7 +159,7 @@ server.patch('/api/v1/tasks/:category/:id', (req, res) => {
   let isSomeToWrite = false
   let withError = false
 
-  const patch = {};
+  const patch = {}
   const errorLog = { status: 'error' }
 
   const newTitle = req.body.title
@@ -171,7 +171,7 @@ server.patch('/api/v1/tasks/:category/:id', (req, res) => {
       isSomeToWrite = true
     } else {
       withError = true
-      errorLog.taskTitle = 'title can\'t be empty'
+      errorLog.taskTitle = "title can't be empty"
     }
   }
 
@@ -270,7 +270,7 @@ if (config.isSocketsEnabled) {
   const echo = sockjs.createServer()
   echo.on('connection', (conn) => {
     connections.push(conn)
-    conn.on('data', async () => { })
+    conn.on('data', async () => {})
     conn.on('close', () => {
       connections = connections.filter((c) => c.readyState !== 3)
     })

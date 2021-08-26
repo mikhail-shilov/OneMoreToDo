@@ -8,17 +8,15 @@ import ListCategories from './Todo/ListCategories'
 const ToDo = () => {
   const { category, timespan } = useParams()
 
-  const [activeCategory, setActiveCategory] = useState(null)
-  const [activeTimespan, setTimespan] = useState(null)
+  const [activeCategory, setActiveCategory] = useState()
+  const [activeTimespan, setTimespan] = useState()
 
   // Set params to state
   useEffect(() => {
-    console.log('change params')
-    if (typeof category !== 'undefined') setActiveCategory(category)
+    console.log('Update params')
+    setActiveCategory(category)
     setTimespan(timespan)
   }, [category, timespan])
-
-
 
   return (
     <div>

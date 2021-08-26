@@ -10,8 +10,7 @@ const toDoApi = axios.create({
 
 const api = {
     loadTasks(category, timespan) {
-        const url = `tasks/${category}${((typeof timespan !== 'undefined') || (timespan !== 'null')) ? `/${timespan}` : ''}`
-        console.log(url)
+        const url = `tasks/${category}${(typeof timespan !== 'undefined') ? `/${timespan}` : ''}`
         return toDoApi.get(url).then(data => data.data)
     },
     loadCategories() {
