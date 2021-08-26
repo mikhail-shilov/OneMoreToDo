@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import Head from './head'
-import ListOfTasks from './Todo/ListOfTasks'
+import ListTasks from './Todo/ListTasks'
 import ListCategories from './Todo/ListCategories'
 
 const ToDo = () => {
@@ -38,8 +38,9 @@ const ToDo = () => {
               <Link className="mx-1" to={`/${category}/mounth`}>mounth</Link>
             </div>
           </div>
-          {(typeof category === "undefined") ? <ListCategories />
-            : <ListOfTasks
+          {(typeof category === "undefined")
+            ? <ListCategories />
+            : <ListTasks
               category={activeCategory}
               timespan={activeTimespan} />}
         </div>

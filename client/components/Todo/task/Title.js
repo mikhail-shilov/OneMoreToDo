@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import api from '../../../api/api'
 
 const Title = (props) => {
-  const { category, taskId, title, refresh } = props
+  const { category, taskId, title, isDone, refresh } = props
   const [editMode, setEditMode] = useState(false)
   const [titleValue, setTitleValue] = useState(title)
 
@@ -31,8 +31,9 @@ const Title = (props) => {
 
   const EditorButton = () => (
     <button
+      disabled={isDone}
       type="button"
-      className="flex-shrink-0 text-sm px-1 py-1 my-1 mx-1 border-2 w-16	rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500"
+      className="flex-shrink-0 text-sm px-1 py-1 my-1 mx-1 border-2 w-16 rounded hover:text-gray-400 text-green border-green hover:bg-yellow-500 disabled:hover:bg-green-100 "
       onClick={!editMode ? doEdit : doSave}
     >
       {!editMode ? 'Edit' : 'Save'}
@@ -50,7 +51,7 @@ const Title = (props) => {
   )
 
   const ShowTitle = () => (
-    <a className='flex-grow justify-center'>
+    <a className={`flex-grow justify-center ${isDone? 'line-through': ''}`}>
       {title}
     </a>
 

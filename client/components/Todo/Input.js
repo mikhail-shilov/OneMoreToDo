@@ -8,7 +8,6 @@ const Input = (props) => {
     setValue(event.target.value)
   }
 
-
   const addHandler = () => {
     console.log(`add...${value}`)
     api.create(props.category, value).then(result => {
